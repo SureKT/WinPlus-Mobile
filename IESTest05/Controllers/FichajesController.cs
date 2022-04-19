@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using IESTest05.Entity;
 using IESTest05.Data;
+using System.Globalization;
 
 namespace IESTest05.Controllers
 {
@@ -20,81 +21,60 @@ namespace IESTest05.Controllers
             context = _context;
         }
 
-        // GET: api/Fichajes
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Fichajes>>> GetFichajes()
-        {
-            return await context.Fichajes.ToListAsync();
-        }
-
         // GET: api/Fichajes/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Fichajes>> GetFichaje(DateTime id)
+        [HttpGet]
+        public ActionResult<IEnumerable<Fichajes>> VerFichajesFechas(String token, DateTime inicio, DateTime fin)
         {
-            var fichaje = await context.Fichajes.FindAsync(id);
+            var tUsuario = context.TUsuarios.FirstOrDefault(u => u.Token == token);
 
-            if (fichaje == null)
+            if (tUsuario == null)
+                return BadRequest("Token incorrecto");
+
+            var fichajes = context.Fichajes.Where(f => f.Personal == tUsuario.Personal && f.Hora >= inicio && f.Hora <= fin).ToList();
+
+            if (fichajes == null)
             {
                 return NotFound();
             }
 
-            return fichaje;
-        }
-
-        // PUT: api/Fichajes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutFichaje(DateTime id, Fichajes fichaje)
-        {
-            if (id != fichaje.Hora)
-            {
-                return BadRequest();
-            }
-
-            context.Entry(fichaje).State = EntityState.Modified;
-
-            try
-            {
-                await context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FichajeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return fichajes;
         }
 
         // POST: api/Fichajes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Fichajes>> PostFichaje(Fichajes fichaje)
+        public ActionResult<Fichajes> InsertarFichaje(Fichajes fichaje, String token)
         {
-            context.Fichajes.Add(fichaje);
-            try
-            {
-                await context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (FichajeExists(fichaje.Hora))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            DateTime nowTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 00);
+            fichaje.Hora = nowTime;
 
-            return CreatedAtAction("GetFichaje", new { id = fichaje.Hora }, fichaje);
+            var tUsuario = context.TUsuarios.FirstOrDefault(u => u.Token == token);
+            if (tUsuario == null)
+                return BadRequest("Token incorrecto");
+
+            var personal = context.Personal.FirstOrDefault(p => p.Codigo == tUsuario.Personal);
+            if (personal.Tarjeta == null)
+                return BadRequest("Código 1 - Tarjeta no encontrada");
+
+            var validacion = context.Validacion.FirstOrDefault(v => v.Personal == tUsuario.Personal && v.Fecha == DateTime.Today);
+            if (validacion == null)
+                return BadRequest("Código 2 - Ficha de validación inexistente");
+
+            var fichajeDuplicado = context.Fichajes.FirstOrDefault(f => f.Personal == tUsuario.Personal && f.Hora == fichaje.Hora);
+            if (fichajeDuplicado != null)
+                return BadRequest("Código 3 - Fichaje duplicado");
+
+            if (personal.FechaIngreso > fichaje.Hora)
+                return BadRequest("Código 4 - Fecha ingreso posterior al fichaje");
+
+            if (personal.FechaBaja < fichaje.Hora)
+                return BadRequest("Código 5 - Fecha baja anterior al fichaje");
+
+            context.Fichajes.Add(fichaje);
+
+            context.SaveChanges();
+
+            return Ok("Código 0 - Fichaje correcto");
         }
 
         // DELETE: api/Fichajes/5

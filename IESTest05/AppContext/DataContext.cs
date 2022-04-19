@@ -16,9 +16,9 @@ namespace IESTest05.Data
         public DbSet<Contadores> Contadores { get; set; }
         public DbSet<Fichajes> Fichajes { get; set; }
         public DbSet<Incidencias> Incidencias { get; set; }
-        public DbSet<Personal> Personales { get; set; }
+        public DbSet<Personal> Personal { get; set; }
         public DbSet<TUsuarios> TUsuarios { get; set; }
-        public DbSet<Validacion> Validaciones { get; set; }
+        public DbSet<Validacion> Validacion { get; set; }
         public DbSet<VContadores> VContadores { get; set; }
         public DbSet<VFichajes> VFichajes { get; set; }
         public DbSet<VIncidencias> VIncidencias { get; set; }

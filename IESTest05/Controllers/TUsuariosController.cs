@@ -93,7 +93,7 @@ namespace IESTest05.Controllers
                 }
                 else
                 {
-                    return Ok("Contraseña incorrecta");
+                    return BadRequest("Contraseña incorrecta");
                 }
             }
             else
