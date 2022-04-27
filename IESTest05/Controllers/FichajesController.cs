@@ -14,31 +14,40 @@ namespace IESTest05.Controllers
     [ApiController]
     public class FichajesController : ControllerBase
     {
-        private readonly DataContext context;
+        private readonly DataContext db;
 
-        public FichajesController(DataContext _context)
+        public FichajesController(DataContext context)
         {
-            context = _context;
+            db = context;
         }
 
-        // GET: api/Fichajes/5
+        // GET: api/Fichajes
         [HttpGet]
-        public ActionResult<IEnumerable<Fichajes>> VerFichajesFechas(String token, DateTime inicio, DateTime fin)
+        public ActionResult<IEnumerable<Fichajes>> verFichajes()
         {
-            var tUsuario = context.TUsuarios.FirstOrDefault(u => u.Token == token);
-
-            if (tUsuario == null)
-                return BadRequest("Token incorrecto");
-
-            var fichajes = context.Fichajes.Where(f => f.Personal == tUsuario.Personal && f.Hora >= inicio && f.Hora <= fin).ToList();
-
-            if (fichajes == null)
-            {
-                return NotFound();
-            }
+            var fichajes = db.Fichajes.Where(f => f.Personal == "502").ToList();
 
             return fichajes;
         }
+
+        //// GET: api/Fichajes
+        //[HttpGet]
+        //public ActionResult<IEnumerable<Fichajes>> verFichajesFechas(String token, DateTime inicio, DateTime fin)
+        //{
+        //    var tUsuario = db.TUsuarios.FirstOrDefault(u => u.Token == token);
+
+        //    if (tUsuario == null)
+        //        return BadRequest("Token incorrecto");
+
+        //    var fichajes = db.Fichajes.Where(f => f.Personal == tUsuario.Personal && f.Hora >= inicio && f.Hora <= fin).ToList();
+
+        //    if (fichajes == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return fichajes;
+        //}
 
         // POST: api/Fichajes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -48,19 +57,19 @@ namespace IESTest05.Controllers
             DateTime nowTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 00);
             fichaje.Hora = nowTime;
 
-            var tUsuario = context.TUsuarios.FirstOrDefault(u => u.Token == token);
+            var tUsuario = db.TUsuarios.FirstOrDefault(u => u.Token == token);
             if (tUsuario == null)
                 return BadRequest("Token incorrecto");
 
-            var personal = context.Personal.FirstOrDefault(p => p.Codigo == tUsuario.Personal);
+            var personal = db.Personal.FirstOrDefault(p => p.Codigo == tUsuario.Personal);
             if (personal.Tarjeta == null)
                 return BadRequest("Código 1 - Tarjeta no encontrada");
 
-            var validacion = context.Validacion.FirstOrDefault(v => v.Personal == tUsuario.Personal && v.Fecha == DateTime.Today);
+            var validacion = db.Validacion.FirstOrDefault(v => v.Personal == tUsuario.Personal && v.Fecha == DateTime.Today);
             if (validacion == null)
                 return BadRequest("Código 2 - Ficha de validación inexistente");
 
-            var fichajeDuplicado = context.Fichajes.FirstOrDefault(f => f.Personal == tUsuario.Personal && f.Hora == fichaje.Hora);
+            var fichajeDuplicado = db.Fichajes.FirstOrDefault(f => f.Personal == tUsuario.Personal && f.Hora == fichaje.Hora);
             if (fichajeDuplicado != null)
                 return BadRequest("Código 3 - Fichaje duplicado");
 
@@ -70,9 +79,9 @@ namespace IESTest05.Controllers
             if (personal.FechaBaja < fichaje.Hora)
                 return BadRequest("Código 5 - Fecha baja anterior al fichaje");
 
-            context.Fichajes.Add(fichaje);
+            db.Fichajes.Add(fichaje);
 
-            context.SaveChanges();
+            db.SaveChanges();
 
             return Ok("Código 0 - Fichaje correcto");
         }
@@ -81,21 +90,21 @@ namespace IESTest05.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFichaje(DateTime id)
         {
-            var fichaje = await context.Fichajes.FindAsync(id);
+            var fichaje = await db.Fichajes.FindAsync(id);
             if (fichaje == null)
             {
                 return NotFound();
             }
 
-            context.Fichajes.Remove(fichaje);
-            await context.SaveChangesAsync();
+            db.Fichajes.Remove(fichaje);
+            await db.SaveChangesAsync();
 
             return NoContent();
         }
 
         private bool FichajeExists(DateTime id)
         {
-            return context.Fichajes.Any(e => e.Hora == id);
+            return db.Fichajes.Any(e => e.Hora == id);
         }
     }
 }

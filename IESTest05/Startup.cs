@@ -29,11 +29,11 @@ namespace IESTest05
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers();
             services.AddDbContext<DataContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("DemoFCTDatabase"));
             });
+            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "IESTest05", Version = "v1" });
@@ -50,7 +50,7 @@ namespace IESTest05
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "IESTest05 v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 

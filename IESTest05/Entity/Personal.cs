@@ -13,7 +13,6 @@ namespace IESTest05.Entity
     {
         public Personal()
         {
-            Acumulados = new HashSet<Acumulados>();
             Fichajes = new HashSet<Fichajes>();
             Validacions = new HashSet<Validacion>();
         }
@@ -147,8 +146,6 @@ namespace IESTest05.Entity
         public DateTime? FDesbloqueo { get; set; }
         public short NReintentos { get; set; }
 
-        [InverseProperty(nameof(Entity.Acumulados.PersonalNavigation))]
-        public virtual ICollection<Acumulados> Acumulados { get; set; }
         [InverseProperty(nameof(Entity.Fichajes.PersonalNavigation))]
         public virtual ICollection<Fichajes> Fichajes { get; set; }
         [InverseProperty(nameof(Validacion.PersonalNavigation))]

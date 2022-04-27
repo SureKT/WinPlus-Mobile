@@ -14,25 +14,25 @@ namespace IESTest05.Controllers
     [ApiController]
     public class TUsuariosController : ControllerBase
     {
-        private readonly DataContext context;
+        private readonly DataContext db;
 
-        public TUsuariosController(DataContext _context)
+        public TUsuariosController(DataContext context)
         {
-            context = _context;
+            db = context;
         }
 
         // GET: api/TUsuarios
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TUsuarios>>> GetTUsuarios()
+        public ActionResult<IEnumerable<TUsuarios>> GetTUsuarios()
         {
-            return await context.TUsuarios.ToListAsync();
+            return db.TUsuarios.ToList();
         }
 
         // GET: api/TUsuarios/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TUsuarios>> GetTUsuarios(string id)
         {
-            var tUsuarios = await context.TUsuarios.FindAsync(id);
+            var tUsuarios = await db.TUsuarios.FindAsync(id);
 
             if (tUsuarios == null)
             {
@@ -52,11 +52,11 @@ namespace IESTest05.Controllers
                 return BadRequest();
             }
 
-            context.Entry(tUsuarios).State = EntityState.Modified;
+            db.Entry(tUsuarios).State = EntityState.Modified;
 
             try
             {
-                await context.SaveChangesAsync();
+                await db.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -80,14 +80,14 @@ namespace IESTest05.Controllers
         {
             if (TUsuariosExists(usuario.Login))
             {
-                TUsuarios miUsuario = context.TUsuarios.FirstOrDefault(u => u.Login == usuario.Login);
+                TUsuarios miUsuario = db.TUsuarios.FirstOrDefault(u => u.Login == usuario.Login);
 
                 if (miUsuario.Password == usuario.Password)
                 {
                     String token = Guid.NewGuid().ToString();
                     miUsuario.Token = token;
 
-                    context.SaveChanges();
+                    db.SaveChanges();
 
                     return Ok("Usuario correcto" + " | Token: " + token);
                 }
@@ -106,21 +106,21 @@ namespace IESTest05.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTUsuarios(string id)
         {
-            var tUsuarios = await context.TUsuarios.FindAsync(id);
+            var tUsuarios = await db.TUsuarios.FindAsync(id);
             if (tUsuarios == null)
             {
                 return NotFound();
             }
 
-            context.TUsuarios.Remove(tUsuarios);
-            await context.SaveChangesAsync();
+            db.TUsuarios.Remove(tUsuarios);
+            await db.SaveChangesAsync();
 
             return NoContent();
         }
 
         private bool TUsuariosExists(string id)
         {
-            return context.TUsuarios.Any(e => e.Login == id);
+            return db.TUsuarios.Any(e => e.Login == id);
         }
     }
 }

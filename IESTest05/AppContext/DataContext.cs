@@ -11,7 +11,6 @@ namespace IESTest05.Data
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
-        public DbSet<Acumulados> Acumulados { get; set; }
         public DbSet<Causas> Causas { get; set; }
         public DbSet<Contadores> Contadores { get; set; }
         public DbSet<Fichajes> Fichajes { get; set; }
@@ -26,9 +25,6 @@ namespace IESTest05.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Acumulados>()
-            .HasKey(a => new { a.Personal, a.Inicio, a.Actividad });
 
             modelBuilder.Entity<Fichajes>()
             .HasKey(f => new { f.Hora, f.Tarjeta, f.Estado });
