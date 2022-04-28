@@ -47,7 +47,7 @@ namespace WinPlusMobile
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "IESTest05 v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WinPlusMobile"));
             }
 
             //app.UseHttpsRedirection();

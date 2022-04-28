@@ -1,10 +1,5 @@
-﻿using WinPlusMobile.Entity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MobileLite.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WinPlusMobile.Data
 {
@@ -37,9 +32,6 @@ namespace WinPlusMobile.Data
 
             modelBuilder.Entity<VFichajes>()
             .HasKey(vf => new { vf.Personal, vf.Fecha, vf.Hora, vf.Funcion });
-
-            modelBuilder.Entity<VIncidencias>()
-            .HasKey(vi => new { vi.Personal, vi.Fecha, vi.Incidencia, vi.Causa });
         }
 
     }

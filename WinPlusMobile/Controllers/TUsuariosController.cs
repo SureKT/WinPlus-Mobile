@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using WinPlusMobile.Data;
-using WinPlusMobile.Entity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MobileLite.Entities;
