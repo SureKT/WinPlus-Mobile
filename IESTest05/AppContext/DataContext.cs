@@ -1,5 +1,6 @@
 ﻿using IESTest05.Entity;
 using Microsoft.EntityFrameworkCore;
+using MobileLite.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace IESTest05.Data
         public DbSet<VContadores> VContadores { get; set; }
         public DbSet<VFichajes> VFichajes { get; set; }
         public DbSet<VIncidencias> VIncidencias { get; set; }
+        public DbSet<Config> Config { get; internal set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

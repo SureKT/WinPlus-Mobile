@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using IESTest05.Entity;
 using IESTest05.Data;
-using System.Globalization;
 
 namespace IESTest05.Controllers
 {
@@ -23,36 +20,26 @@ namespace IESTest05.Controllers
 
         // GET: api/Fichajes
         [HttpGet]
-        public ActionResult<IEnumerable<Fichajes>> verFichajes()
+        public ActionResult<IEnumerable<Fichajes>> verFichajesFechas(String token, DateTime inicio, DateTime fin)
         {
-            var fichajes = db.Fichajes.Where(f => f.Personal == "502").ToList();
+            var tUsuario = db.TUsuarios.FirstOrDefault(u => u.Token == token);
+
+            if (tUsuario == null)
+                return BadRequest("Token incorrecto");
+
+            var fichajes = db.Fichajes.Where(f => f.Personal == tUsuario.Personal && f.Hora >= inicio && f.Hora <= fin).ToList();
+
+            if (fichajes == null)
+            {
+                return NotFound();
+            }
 
             return fichajes;
         }
 
-        //// GET: api/Fichajes
-        //[HttpGet]
-        //public ActionResult<IEnumerable<Fichajes>> verFichajesFechas(String token, DateTime inicio, DateTime fin)
-        //{
-        //    var tUsuario = db.TUsuarios.FirstOrDefault(u => u.Token == token);
-
-        //    if (tUsuario == null)
-        //        return BadRequest("Token incorrecto");
-
-        //    var fichajes = db.Fichajes.Where(f => f.Personal == tUsuario.Personal && f.Hora >= inicio && f.Hora <= fin).ToList();
-
-        //    if (fichajes == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return fichajes;
-        //}
-
         // POST: api/Fichajes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public ActionResult<Fichajes> InsertarFichaje(Fichajes fichaje, String token)
+        public ActionResult<Fichajes> InsertarFichaje(String token, Fichajes fichaje)
         {
             DateTime nowTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 00);
             fichaje.Hora = nowTime;
@@ -86,25 +73,9 @@ namespace IESTest05.Controllers
             return Ok("Código 0 - Fichaje correcto");
         }
 
-        // DELETE: api/Fichajes/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFichaje(DateTime id)
+        private bool FichajeExists(DateTime id, String tarjeta, int estado)
         {
-            var fichaje = await db.Fichajes.FindAsync(id);
-            if (fichaje == null)
-            {
-                return NotFound();
-            }
-
-            db.Fichajes.Remove(fichaje);
-            await db.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool FichajeExists(DateTime id)
-        {
-            return db.Fichajes.Any(e => e.Hora == id);
+            return db.Fichajes.Any(f => f.Hora == id && f.Tarjeta == tarjeta && f.Estado == estado);
         }
     }
 }

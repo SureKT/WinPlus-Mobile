@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using IESTest05.Entity;
 using IESTest05.Data;
 using System.Globalization;
+using MobileLite.Entities;
 
 namespace IESTest05.Controllers
 {
@@ -21,44 +22,36 @@ namespace IESTest05.Controllers
             db = context;
         }
 
-        [HttpGet]
-        public IEnumerable<object> verVContadoresFechas(String token, DateTime inicio, DateTime fin)
+        //Recibe como parametro de entrada el token de sesion del usuario, la fecha inicio y fin y devuelve un listado de contadores dentro de esas fechas
+        [HttpPost] // POST api/vcontadores
+        public IEnumerable<Object> Post(string token, DateTime inicio, DateTime fin)
         {
-            var tUsuario = db.TUsuarios.FirstOrDefault(u => u.Token == token);
-
-            if (tUsuario == null)
-                return null;
-                //return BadRequest("Token incorrecto");
-
-            return db.VContadores.Where(vc =>
-                vc.Personal == tUsuario.Personal &&
-                vc.Fecha >= inicio &&
-                vc.Fecha <= fin)
-                .GroupBy(vc => vc.Contador)
-                .Select(c => new
-                {
-                    Contador = c.Key,
-                    Valor = c.Sum(v => v.Valor)
-                })
-                .Join(db.Contadores,
-                vc => vc.Contador,
-                c => c.Codigo,
-                (vc, c) => new { Codigo = vc.Contador, Descripcion = c.Descripcion, Valor = vc.Valor, Consultar = c.Consultar }).Where(c => c.Consultar == 1);
-
-            /*
-            return context.VContadores
-            .Where(vc => vc.Fecha >= fechaini && vc.Fecha <= fechafin && vc.Personal == tUser.Personal)
-            .GroupBy(vc => vc.Contador)
-            .Select(c => new
+            try
             {
-            Contador = c.Key,
-            Valor = c.Sum(v => v.Valor)
-            })
-            .Join(context.Contadores,
-            vc => vc.Contador,
-            c => c.Codigo,
-            (vc, c) => new { Codigo = vc.Contador, Descripcion = c.Descripcion, Valor = vc.Valor, Tipo = c.Tipo });
-            */
+                var tUsuario = db.TUsuarios.FirstOrDefault(u => u.Token == token);
+
+                if (tUsuario == null)
+                    return null;
+
+                return db.VContadores.Where(vc =>
+                    vc.Personal == tUsuario.Personal &&
+                    vc.Fecha >= inicio &&
+                    vc.Fecha <= fin)
+                    .GroupBy(vc => vc.Contador)
+                    .Select(c => new
+                    {
+                        Contador = c.Key,
+                        Valor = c.Sum(v => v.Valor)
+                    })
+                    .Join(db.Contadores,
+                    vc => vc.Contador,
+                    c => c.Codigo,
+                    (vc, c) => new { Codigo = vc.Contador, Descripcion = c.Descripcion, Valor = vc.Valor, Consultar = c.Consultar }).Where(c => c.Consultar == 1);
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }
