@@ -1,4 +1,4 @@
-﻿using IESTest05.Entity;
+﻿using WinPlusMobile.Entity;
 using Microsoft.EntityFrameworkCore;
 using MobileLite.Entities;
 using System;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IESTest05.Data
+namespace WinPlusMobile.Data
 {
     public class DataContext : DbContext
     {

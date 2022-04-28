@@ -1,4 +1,4 @@
-using IESTest05.Data;
+using WinPlusMobile.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -14,7 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IESTest05
+namespace WinPlusMobile
 {
     public class Startup
     {

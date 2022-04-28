@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace IESTest05
+namespace WinPlusMobile
 {
     public class Program
     {

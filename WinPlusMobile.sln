@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.32228.343
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IESTest05", "IESTest05\IESTest05.csproj", "{092AB08B-4326-40D1-BC81-7AC7CC4E8C47}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinPlusMobile", "WinPlusMobile\WinPlusMobile.csproj", "{092AB08B-4326-40D1-BC81-7AC7CC4E8C47}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

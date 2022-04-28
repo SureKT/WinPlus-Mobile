@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using IESTest05.Entity;
-using IESTest05.Data;
+using WinPlusMobile.Entity;
+using WinPlusMobile.Data;
 using System.Globalization;
 using MobileLite.Entities;
 

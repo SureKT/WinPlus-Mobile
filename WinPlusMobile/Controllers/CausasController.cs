@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using IESTest05.Data;
+using WinPlusMobile.Data;
 using MobileLite.Entities;
-using IESTest05.Entity;
 
-namespace IESTest05.Controllers
+namespace WinPlusMobile.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
