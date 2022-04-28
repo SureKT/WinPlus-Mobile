@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using IESTest05.Entity;
 using IESTest05.Data;
+using MobileLite.Entities;
+using System.Globalization;
+using Microsoft.EntityFrameworkCore;
 
 namespace IESTest05.Controllers
 {
@@ -18,64 +20,87 @@ namespace IESTest05.Controllers
             db = context;
         }
 
-        // GET: api/Fichajes
-        [HttpGet]
-        public ActionResult<IEnumerable<Fichajes>> verFichajesFechas(String token, DateTime inicio, DateTime fin)
+        // In: Token, fichaje | Out: Objeto Respuesta | Realiza una insercion de fichaje
+        [HttpPost] // POST: api/Fichajes
+        public Resp Post(String token, Fichajes fichaje)
         {
-            var tUsuario = db.TUsuarios.FirstOrDefault(u => u.Token == token);
-
-            if (tUsuario == null)
-                return BadRequest("Token incorrecto");
-
-            var fichajes = db.Fichajes.Where(f => f.Personal == tUsuario.Personal && f.Hora >= inicio && f.Hora <= fin).ToList();
-
-            if (fichajes == null)
+            try
             {
-                return NotFound();
+                // Variables de dia y hora
+                DateTime today = DateTime.ParseExact(DateTime.Today.ToString("yyyyMMdd HH:mm"), "yyyyMMdd HH:mm", CultureInfo.InvariantCulture);
+
+                DateTime now = DateTime.ParseExact(DateTime.Now.ToString("yyyyMMdd HH:mm"), "yyyyMMdd HH:mm", CultureInfo.InvariantCulture);
+
+                fichaje.Hora = now;
+
+                // Sesión no encontrada
+                var usuario = db.TUsuarios.FirstOrDefault(u => u.Token == token);
+                if (usuario == null)
+                    return new Resp(1, "Sesión no encontrada");
+
+                // Tarjeta no encontrada
+                var personal = db.Personal.FirstOrDefault(p => p.Codigo == usuario.Personal);
+                if (personal.Tarjeta == null)
+                    return new Resp(2, "Tarjeta no encontrada");
+
+                // Ficha de validación no creada
+                if (!db.Validacion.Any(v => v.Personal == usuario.Personal && v.Fecha == today))
+                    return new Resp(3, "Ficha de validación no creada");
+
+                // Fichaje duplicado
+                if (db.Fichajes.Any(f => f.Personal == usuario.Personal && f.Hora == fichaje.Hora))
+                    return new Resp(4, "Fichaje duplicado");
+
+                // Fecha de ingreso posterior al fichaje
+                if (personal.FechaIngreso > today)
+                    return new Resp(5, "Fecha de ingreso posterior al fichaje");
+
+                // Fecha de baja anterior al fichaje
+                if (personal.FechaBaja < today)
+                    return new Resp(6, "Fecha baja anterior al fichaje");
+
+                // Montamos el insert para VFichajes del fichaje actual
+                VFichajes vFichajeInsert = new VFichajes(personal.Codigo, today, now, fichaje.Funcion, fichaje.Causa, "", 0, 0);
+
+                // Añadimos el vfichaje
+                db.VFichajes.Add(vFichajeInsert);
+
+                // Modificamos el personal
+                personal.UltimoFichaje = now;
+                personal.UltimaFuncion = fichaje.Funcion;
+                personal.UltimaFicha = today;
+
+                db.Entry(personal).State = EntityState.Modified;
+
+                // Creamos e insertamos en fichaje real
+                Fichajes fichajeInsert = new Fichajes(personal.Codigo, now, 23, fichaje.Funcion, personal.Tarjeta, fichaje.Causa, 3, "", 0, 0, fichaje.Longitud, fichaje.Latitud, 0, 0, null);
+
+                // Añadimos el fichaje
+                db.Fichajes.Add(fichajeInsert);
+
+                db.SaveChanges();
+
+                // Notificamos el fichaje 
+                if (fichaje.Funcion == 1)
+                    // Fichaje correcto entrada
+                    return new Resp(0, "Fichaje de entrada correcto: " + now.ToString("HH:mm"));
+
+                if (fichaje.Funcion == 2)
+                    if (fichaje.Causa == 0) // Fichaje correcto salida
+                    {
+                        return new Resp(0, "Fichaje de salida correcto: " + now.ToString("HH:mm"));
+                    }
+                    else if (fichaje.Causa != 0) // Fichaje correcto salida con incidencia
+                    {
+                        return new Resp(0, "Fichaje de salida Inc. por " + db.Causas.FirstOrDefault(c => c.codigo == fichaje.Causa).descripcion.ToString() + ", correcto: " + now.ToString("HH:mm"));
+                    }
+
+                return new Resp();
             }
-
-            return fichajes;
-        }
-
-        // POST: api/Fichajes
-        [HttpPost]
-        public ActionResult<Fichajes> InsertarFichaje(String token, Fichajes fichaje)
-        {
-            DateTime nowTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, DateTime.Now.Hour, DateTime.Now.Minute, 00);
-            fichaje.Hora = nowTime;
-
-            var tUsuario = db.TUsuarios.FirstOrDefault(u => u.Token == token);
-            if (tUsuario == null)
-                return BadRequest("Token incorrecto");
-
-            var personal = db.Personal.FirstOrDefault(p => p.Codigo == tUsuario.Personal);
-            if (personal.Tarjeta == null)
-                return BadRequest("Código 1 - Tarjeta no encontrada");
-
-            var validacion = db.Validacion.FirstOrDefault(v => v.Personal == tUsuario.Personal && v.Fecha == DateTime.Today);
-            if (validacion == null)
-                return BadRequest("Código 2 - Ficha de validación inexistente");
-
-            var fichajeDuplicado = db.Fichajes.FirstOrDefault(f => f.Personal == tUsuario.Personal && f.Hora == fichaje.Hora);
-            if (fichajeDuplicado != null)
-                return BadRequest("Código 3 - Fichaje duplicado");
-
-            if (personal.FechaIngreso > fichaje.Hora)
-                return BadRequest("Código 4 - Fecha ingreso posterior al fichaje");
-
-            if (personal.FechaBaja < fichaje.Hora)
-                return BadRequest("Código 5 - Fecha baja anterior al fichaje");
-
-            db.Fichajes.Add(fichaje);
-
-            db.SaveChanges();
-
-            return Ok("Código 0 - Fichaje correcto");
-        }
-
-        private bool FichajeExists(DateTime id, String tarjeta, int estado)
-        {
-            return db.Fichajes.Any(f => f.Hora == id && f.Tarjeta == tarjeta && f.Estado == estado);
+            catch
+            {
+                return new Resp(-1, "Error al realizar el fichaje");
+            }
         }
     }
 }

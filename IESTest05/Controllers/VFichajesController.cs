@@ -22,21 +22,18 @@ namespace MobileLite.Controllers
             db = context;
         }
 
-        //Recibe conmo parameto de entrada el token de sesion del usuario y la fecha inicio y fin devuelve un listado de fichajes dentro de esas fechas
+        // In: Token, fecha inicio, fecha fin | Out: Listado de vfichajes correspondientes
         [HttpPost] // POST api/vfichajes
         public IEnumerable<VFichajes> Post(string token, DateTime inicio, DateTime fin)
         {
             try
             {
-                // Recuperamos los datos de la sesión
-                var tUser = db.TUsuarios.FirstOrDefault(t => t.Token == token);
+                var usuario = db.TUsuarios.FirstOrDefault(t => t.Token == token);
 
-                if (tUser == null)
+                if (usuario == null)
                     return null;
 
-                //Recuperamos un listado de los fichajes que este usuario realizó en el intervalo indicado
-
-                return db.VFichajes.Where(vf => vf.Fecha >= inicio && vf.Fecha <= fin && vf.Personal == tUser.Personal).ToList();
+                return db.VFichajes.Where(vf => vf.Fecha >= inicio && vf.Fecha <= fin && vf.Personal == usuario.Personal).ToList();
             }
             catch
             {

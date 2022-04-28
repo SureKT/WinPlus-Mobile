@@ -2,35 +2,39 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-#nullable disable
-
-namespace IESTest05.Entity
+namespace MobileLite.Entities
 {
-    public partial class VFichajes
+    public class VFichajes
     {
+        public VFichajes(string Personal, DateTime Fecha, DateTime Hora, byte funcion, short causa, String centro, byte aux, byte tipo)
+        {
+            this.Personal = Personal;
+            this.Fecha = Fecha;
+            this.Hora = Hora;
+            this.Funcion = funcion;
+            this.Causa = causa;
+            this.Centro = centro;
+            this.Aux = aux;
+            this.Tipo = tipo;
+        }
+
         [Key]
-        [StringLength(10)]
         public string Personal { get; set; }
         [Key]
-        [Column(TypeName = "smalldatetime")]
         public DateTime Fecha { get; set; }
         [Key]
-        [Column(TypeName = "smalldatetime")]
         public DateTime Hora { get; set; }
         [Key]
         public byte Funcion { get; set; }
         public short Causa { get; set; }
-        [StringLength(10)]
         public string Centro { get; set; }
-        [Column(TypeName = "numeric(18, 0)")]
-        public decimal Indice { get; set; }
+
+        //public decimal Indice { get; set; }
         public byte Aux { get; set; }
         public byte Tipo { get; set; }
-
-        [ForeignKey("Personal,Fecha")]
-        [InverseProperty("VFichajes")]
-        public virtual Validacion Validacion { get; set; }
     }
 }

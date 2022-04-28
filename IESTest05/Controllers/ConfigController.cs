@@ -23,8 +23,8 @@ namespace MobileLite.Controllers
             db = context;
         }
 
-        // GET api/config/5
-        [HttpGet("{id}")]
+        // In: Id de config | Out: Objeto Config
+        [HttpGet("{id}")] // GET api/config/5
         public Config Get(String id)
         {           
             try

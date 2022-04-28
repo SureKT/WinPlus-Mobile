@@ -20,11 +20,12 @@ namespace MobileLite.Entities
             Descripcion = descripcion;
         }
 
-        public Resp() { }
+        public Resp()
+        {
+        }
 
         public int Codigo { get; set; }
         public String Descripcion { get; set; }
         public String Datos { get; set; }
     }
-
 }

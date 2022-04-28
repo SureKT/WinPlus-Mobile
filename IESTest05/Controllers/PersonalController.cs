@@ -22,9 +22,8 @@ namespace IESTest05.Controllers
             db = context;
         }
 
-        // GET api/personal
-        // Recibe como parametro un token de sesion y devuelve el personal al que esté relacionado
-        [HttpGet("{Token}")]
+        // In: Token | Out: Personal correspondiente al token
+        [HttpGet("{Token}")] // GET api/personal
         public Personal Get(String token)
         {
             try
@@ -40,9 +39,9 @@ namespace IESTest05.Controllers
 
         }
 
-        // POST api/personal
-        // Recibe como parametro un token de sesion y devuelve el string de la foto de usuarios codificada en base 64
-        [HttpPost("{Token}")]
+        
+        // In: Token | Out: String de foto de usuario codificada en base 64
+        [HttpPost("{Token}")] // POST api/personal
         public String Post(String token)
         {
             try
@@ -57,11 +56,6 @@ namespace IESTest05.Controllers
             {
                 return null;
             }
-        }
-
-        private bool PersonalExists(string id)
-        {
-            return db.Personal.Any(p => p.Codigo == id);
         }
     }
 }

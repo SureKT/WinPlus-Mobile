@@ -22,19 +22,19 @@ namespace IESTest05.Controllers
             db = context;
         }
 
-        //Recibe como parametro de entrada el token de sesion del usuario, la fecha inicio y fin y devuelve un listado de contadores dentro de esas fechas
+        // In: Token, fecha inicio, fecha fin | Out: Listado de vcontadores correspondientes
         [HttpPost] // POST api/vcontadores
         public IEnumerable<Object> Post(string token, DateTime inicio, DateTime fin)
         {
             try
             {
-                var tUsuario = db.TUsuarios.FirstOrDefault(u => u.Token == token);
+                var usuario = db.TUsuarios.FirstOrDefault(u => u.Token == token);
 
-                if (tUsuario == null)
+                if (usuario == null)
                     return null;
 
                 return db.VContadores.Where(vc =>
-                    vc.Personal == tUsuario.Personal &&
+                    vc.Personal == usuario.Personal &&
                     vc.Fecha >= inicio &&
                     vc.Fecha <= fin)
                     .GroupBy(vc => vc.Contador)

@@ -22,7 +22,7 @@ namespace MobileLite.Controllers
             this.context = context;
         }
 
-        // Devuelve un listado con todos los contadores
+        // Out: Listado de todos los contadores
         [HttpGet] // GET: api/contadores
         public IEnumerable<Contadores> Get()
         {
@@ -37,7 +37,7 @@ namespace MobileLite.Controllers
 
         }
 
-        //Recibe comco parametro la id de un contador y devuelve el correspondiente
+        // In: Id de contador | Out: Contador correspondiente
         [HttpGet("{id}")] // GET api/contadores/5
         public Contadores Get(String id)
         {

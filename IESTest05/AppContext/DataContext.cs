@@ -15,13 +15,11 @@ namespace IESTest05.Data
         public DbSet<Causas> Causas { get; set; }
         public DbSet<Contadores> Contadores { get; set; }
         public DbSet<Fichajes> Fichajes { get; set; }
-        public DbSet<Incidencias> Incidencias { get; set; }
         public DbSet<Personal> Personal { get; set; }
         public DbSet<TUsuarios> TUsuarios { get; set; }
         public DbSet<Validacion> Validacion { get; set; }
         public DbSet<VContadores> VContadores { get; set; }
         public DbSet<VFichajes> VFichajes { get; set; }
-        public DbSet<VIncidencias> VIncidencias { get; set; }
         public DbSet<Config> Config { get; internal set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

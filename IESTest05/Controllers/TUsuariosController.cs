@@ -19,9 +19,8 @@ namespace IESTest05.Controllers
             db = context;
         }
 
-        // GET api/tusuarios/token
-        // Recibe com parametro de entrada el token de sesion y devuelve los datos del usuario
-        [HttpGet("{Token}")]
+        // In: Token | Out: TUsuario correspondiente al token
+        [HttpGet("{Token}")] // GET api/tusuarios/token
         public TUsuarios Get(String token)
         {
             try
@@ -34,9 +33,8 @@ namespace IESTest05.Controllers
             }
         }
 
-        // POST: api/tusuarios
-        // Autenticacion de usuarios
-        [HttpPost]
+        // In: Login, password | Autenticacion de usuarios
+        [HttpPost] // POST: api/tusuarios
         public Resp Post(String login, String password)
         {
             try

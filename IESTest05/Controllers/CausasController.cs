@@ -22,9 +22,8 @@ namespace IESTest05.Controllers
             db = context;
         }
 
-        // GET: api/<CausasController>
-        // Devuelve un listado con todas las causas
-        [HttpGet]
+        // Out: Listado de causas
+        [HttpGet] // GET: api/causas
         public IEnumerable<Causas> Get()
         {
             try
@@ -37,14 +36,14 @@ namespace IESTest05.Controllers
             }
         }
 
-        // GET api/<CausasController>/5
-        // Recibe un codigo de causa y devuelve la correspondiente
-        [HttpGet("{codigo}")]
+        
+        // In: Codigo de causa | Out: Causa correspondiente
+        [HttpGet("{codigo}")] // GET api/causas/5
         public Causas Get(int codigo)
         {                   
             try
             {
-                return db.Causas.FirstOrDefault(c => c.Codigo == codigo);
+                return db.Causas.FirstOrDefault(c => c.codigo == codigo);
             }
             catch
             {
