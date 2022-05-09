@@ -20,7 +20,7 @@ namespace MobileLite.Controllers
 
         // In: Token, fecha inicio, fecha fin | Out: Listado de vfichajes correspondientes
         [HttpPost] // POST api/vfichajes
-        public IEnumerable<VFichajes> Post(string token, DateTime inicio, DateTime fin)
+        public IEnumerable<VFichajes> Post([FromForm] String token, [FromForm] DateTime inicio, [FromForm] DateTime fin)
         {
             try
             {

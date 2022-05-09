@@ -20,8 +20,8 @@ namespace WinPlusMobile.Controllers
         }
 
         // In: Token, fichaje | Out: Objeto Respuesta | Realiza una insercion de fichaje
-        [HttpPost] // POST: api/Fichajes
-        public Resp Post(String token, Fichajes fichaje)
+        [HttpPost("{token}")] // POST: api/Fichajes
+        public Resp Post(String token, [FromBody] Fichajes fichaje)
         {
             try
             {
@@ -39,7 +39,7 @@ namespace WinPlusMobile.Controllers
 
                 // Tarjeta no encontrada
                 var personal = db.Personal.FirstOrDefault(p => p.Codigo == usuario.Personal);
-                if (personal.Tarjeta == null)
+                if (personal == null || personal.Tarjeta == null)
                     return new Resp(2, "Tarjeta no encontrada");
 
                 // Ficha de validación no creada
@@ -82,16 +82,16 @@ namespace WinPlusMobile.Controllers
                 // Notificamos el fichaje 
                 if (fichaje.Funcion == 1)
                     // Fichaje correcto entrada
-                    return new Resp(0, "Fichaje de entrada correcto: " + now.ToString("HH:mm"));
+                    return new Resp(0, "Fichada entrada a las: " + now.ToString("HH:mm"));
 
                 if (fichaje.Funcion == 2)
                     if (fichaje.Causa == 0) // Fichaje correcto salida
                     {
-                        return new Resp(0, "Fichaje de salida correcto: " + now.ToString("HH:mm"));
+                        return new Resp(0, "Fichada salida a las: " + now.ToString("HH:mm"));
                     }
                     else if (fichaje.Causa != 0) // Fichaje correcto salida con incidencia
                     {
-                        return new Resp(0, "Fichaje de salida Inc. por " + db.Causas.FirstOrDefault(c => c.codigo == fichaje.Causa).descripcion.ToString() + ", correcto: " + now.ToString("HH:mm"));
+                        return new Resp(0, "Fichada salida por '" + db.Causas.FirstOrDefault(c => c.Codigo == fichaje.Causa).Descripcion.ToString() + "' a las: " + now.ToString("HH:mm"));
                     }
 
                 return new Resp();

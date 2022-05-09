@@ -19,12 +19,17 @@ namespace WinPlusMobile.Controllers
         }
 
         // In: Token | Out: TUsuario correspondiente al token
-        [HttpGet("{Token}")] // GET api/tusuarios/token
-        public TUsuarios Get(String token)
+        [HttpPost] // POST: api/tusuarios
+        [Route("{validar}")]
+        public Resp Get([FromForm] String token)
         {
             try
             {
-                return db.TUsuarios.FirstOrDefault(u => u.Token == token);
+                var usuario = db.TUsuarios.FirstOrDefault(u => u.Token == token);
+                if (usuario != null)
+                    return new Resp(0, "Token válido");
+
+                return null;
             }
             catch
             {
@@ -34,13 +39,13 @@ namespace WinPlusMobile.Controllers
 
         // In: Login, password | Autenticacion de usuarios
         [HttpPost] // POST: api/tusuarios
-        public Resp Post(String login, String password)
+        public Resp Post([FromForm] String login, [FromForm] String password)
         {
             try
             {
                 TUsuarios usuario = db.TUsuarios.FirstOrDefault(u => u.Login == login);
 
-                if (!TUsuariosExists(login))
+                if (usuario == null)
                     return new Resp(1, "Usuario no encontrado");
 
                 if (!usuario.Password.Equals(password))
@@ -58,11 +63,6 @@ namespace WinPlusMobile.Controllers
             {
                 return null;
             }
-        }
-
-        private bool TUsuariosExists(string id)
-        {
-            return db.TUsuarios.Any(e => e.Login == id);
         }
     }
 }

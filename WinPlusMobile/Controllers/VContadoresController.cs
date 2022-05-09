@@ -19,7 +19,7 @@ namespace WinPlusMobile.Controllers
 
         // In: Token, fecha inicio, fecha fin | Out: Listado de vcontadores correspondientes
         [HttpPost] // POST api/vcontadores
-        public IEnumerable<Object> Post(string token, DateTime inicio, DateTime fin)
+        public IEnumerable<Object> Post([FromForm] String token, [FromForm] DateTime inicio, [FromForm] DateTime fin)
         {
             try
             {

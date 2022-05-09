@@ -10,7 +10,7 @@ namespace MobileLite.Entities
 {
     public class VFichajes
     {
-        public VFichajes(string Personal, DateTime Fecha, DateTime Hora, byte funcion, short causa, String centro, byte aux, byte tipo)
+        public VFichajes(string Personal, DateTime Fecha, DateTime Hora, byte funcion, short causa, string centro, short aux, byte tipo)
         {
             this.Personal = Personal;
             this.Fecha = Fecha;
@@ -34,7 +34,7 @@ namespace MobileLite.Entities
         public string Centro { get; set; }
 
         //public decimal Indice { get; set; }
-        public byte Aux { get; set; }
+        public short Aux { get; set; }
         public byte Tipo { get; set; }
     }
 }

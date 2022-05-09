@@ -31,14 +31,14 @@ namespace WinPlusMobile.Controllers
             }
         }
 
-        
+
         // In: Codigo de causa | Out: Causa correspondiente
         [HttpGet("{codigo}")] // GET api/causas/5
         public Causas Get(int codigo)
-        {                   
+        {
             try
             {
-                return db.Causas.FirstOrDefault(c => c.codigo == codigo);
+                return db.Causas.FirstOrDefault(c => c.Codigo == codigo);
             }
             catch
             {
