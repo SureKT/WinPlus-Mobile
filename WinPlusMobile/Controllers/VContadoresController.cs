@@ -41,7 +41,7 @@ namespace WinPlusMobile.Controllers
                     .Join(db.Contadores,
                     vc => vc.Contador,
                     c => c.Codigo,
-                    (vc, c) => new { Codigo = vc.Contador, Descripcion = c.Descripcion, Valor = vc.Valor, Consultar = c.Consultar }).Where(c => c.Consultar == 1);
+                    (vc, c) => new { Codigo = vc.Contador, Descripcion = c.Descripcion, Valor = vc.Valor, Consultar = c.Consultar, Tipo = c.Tipo }).Where(c => c.Consultar == 1);
             }
             catch
             {
